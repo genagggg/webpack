@@ -1,0 +1,64 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+ width: 1200px;
+ display: flex;
+ justify-content: center;
+}
+
+.App {
+ width: 800px;
+}
+
+button {
+  background: red;
+}
+.buttonStandart {
+  background: yellowgreen;
+}
+
+.post {
+  display: flex;
+  padding: 15px;
+  border: 2px solid teal;
+  margin-top: 15px;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.post__btns {
+  display: flex;
+}
+
+.post-enter {
+  transform: translateX(-350px);
+}
+.post-enter-active {
+  transform: translateX(0px);
+  transition: all 500ms ease-in;
+}
+.post-exit {
+  opacity: 1;
+}
+.post-exit-active {
+  transform: translateX(-350px);
+  transition: all 500ms ease-in;
+}
+
+.hrcustom{
+  margin: 10px 0;
+}
+
+.boxRed{
+  width: 200px;
+  height: 200px;
+  border: 2px solid green;
+  background: red;
+}
+
+
+
