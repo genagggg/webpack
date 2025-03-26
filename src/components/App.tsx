@@ -9,31 +9,17 @@ import MySelect from "./UI/select/MySelect";
 import PostFilter from "./PostFilter";
 import CouchApp from "./CouchApp/CouchApp";
 import MyModal from "./UI/MyModal/MyModal";
+import { usePosts } from "../hooks/usePosts";
 
 export default function App() {
   const [posts, setPosts] = useState([
-    { id: 1, title: "aa", body: "hhhhh" },
-    { id: 2, title: "zz", body: "mmmm" },
-    { id: 3, title: "bb", body: "aaa" },
+
   ]);
 
   const [modal, setModal] = useState(false)
 const [filter, setFilter]=useState({sort:'', query:''})
 
-  const sortedPosts = useMemo(() => {
-    console.log("Отработала функция сортед постс");
-    if (filter.sort) {
-      return [...posts].sort((a: any, b: any) =>
-        a[filter.sort].localeCompare(b[filter.sort])
-      );
-    }
-    return posts;
-  }, [filter.sort, posts]);
-
-  const sortedAndSearchedPosts = useMemo(()=>{
-    return sortedPosts.filter((post: any)=> 
-      post.title.toLowerCase().includes(filter.query.toLowerCase()))
-  }, [filter.query, sortedPosts])
+const sortedAndSearchedPosts = usePosts(posts, filter.sort, filter.query)
 
   const createPost = (newPost: any) => {
     setPosts([...posts, newPost]);
@@ -47,7 +33,7 @@ const [filter, setFilter]=useState({sort:'', query:''})
   return (
     <div className={style.App}>
       <MyButton style={{marginTop: '30px'}} onClick={()=>{setModal(true)}}>Создать пользователя</MyButton>
-      {/* <MyModal visible={modal} setVisible={setModal}><PostForm create={createPost} /></MyModal> */}
+      <MyModal visible={modal} setVisible={setModal}><PostForm create={createPost} /></MyModal>
       
       <PostFilter filter={filter} setFilter={setFilter}/>
       <hr className={style.hrcustom} />
@@ -58,7 +44,7 @@ const [filter, setFilter]=useState({sort:'', query:''})
       <hr />
       <p>Ниже Находится Тестовая Область приложения</p>
 
-<CouchApp></CouchApp>
+{/* <CouchApp></CouchApp>   //Тренировочный компонент app  */}
 
     </div>
   );
