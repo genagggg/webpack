@@ -10,6 +10,7 @@ import PostFilter from "./PostFilter";
 import CouchApp from "./CouchApp/CouchApp";
 import MyModal from "./UI/MyModal/MyModal";
 import { usePosts } from "../hooks/usePosts";
+import axios from "axios";
 
 export default function App() {
   const [posts, setPosts] = useState([]);
@@ -24,12 +25,18 @@ export default function App() {
     setModal(false);
   };
 
+  async function fetchPosts() {
+    const response = await axios.get("https://dummyjson.com/posts");
+    setPosts(response.data.posts);
+  }
+
   const removePost = (post: any) => {
     setPosts(posts.filter((p) => p.id !== post.id));
   };
 
   return (
     <div className={style.App}>
+      <button onClick={fetchPosts}>GET POSTS</button>
       <MyButton
         style={{ marginTop: "30px" }}
         onClick={() => {
