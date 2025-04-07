@@ -11,6 +11,7 @@ import CouchApp from "./CouchApp/CouchApp";
 import MyModal from "./UI/MyModal/MyModal";
 import { usePosts } from "../hooks/usePosts";
 import PostService from "../API/PostServuce";
+import Loader from "./UI/Loader/Loader";
 
 export default function App() {
   const [posts, setPosts] = useState([]);
@@ -21,9 +22,12 @@ export default function App() {
 
   async function fetchPosts() {
     setIsPostsLoading(true);
-    const posts = await PostService.getAll();
-    setPosts(posts);
-    setIsPostsLoading(false);
+    setTimeout(async ()=>{
+      const posts = await PostService.getAll();
+      setPosts(posts);
+      setIsPostsLoading(false);
+    }, 2000)
+   
   }
 
   useEffect(() => {
@@ -56,7 +60,7 @@ export default function App() {
       <hr className={style.hrcustom} />
       <PostFilter filter={filter} setFilter={setFilter} />
       {isPostsLoading ? (
-        <h1>Идёт загрузка...</h1>
+        <div style={{display: 'flex', justifyContent: 'center', marginTop: '50px'}}><Loader/></div>
       ) : (
         <NewPostList remove={removePost} posts={sortedAndSearchedPosts} />
       )}
