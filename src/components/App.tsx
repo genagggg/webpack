@@ -12,23 +12,17 @@ import MyModal from "./UI/MyModal/MyModal";
 import { usePosts } from "../hooks/usePosts";
 import PostService from "../API/PostServuce";
 import Loader from "./UI/Loader/Loader";
+import { useFetching } from "../hooks/useFetching";
 
 export default function App() {
   const [posts, setPosts] = useState([]);
   const [modal, setModal] = useState(false);
   const [filter, setFilter] = useState({ sort: "", query: "" });
   const sortedAndSearchedPosts = usePosts(posts, filter.sort, filter.query);
-  const [isPostsLoading, setIsPostsLoading] = useState(false);
-
-  async function fetchPosts() {
-    setIsPostsLoading(true);
-    setTimeout(async ()=>{
-      const posts = await PostService.getAll();
-      setPosts(posts);
-      setIsPostsLoading(false);
-    }, 2000)
-   
-  }
+  const [fetchPosts, isPostsLoading, postsError] = useFetching(async () => {
+    const posts = await PostService.getAll();
+    setPosts(posts);
+  });
 
   useEffect(() => {
     fetchPosts();
@@ -59,8 +53,19 @@ export default function App() {
       </MyModal>
       <hr className={style.hrcustom} />
       <PostFilter filter={filter} setFilter={setFilter} />
+
+      {postsError && <h1>Произошла ошибка ${postsError}</h1>}
+
       {isPostsLoading ? (
-        <div style={{display: 'flex', justifyContent: 'center', marginTop: '50px'}}><Loader/></div>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            marginTop: "50px",
+          }}
+        >
+          <Loader />
+        </div>
       ) : (
         <NewPostList remove={removePost} posts={sortedAndSearchedPosts} />
       )}
