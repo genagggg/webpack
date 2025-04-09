@@ -17,11 +17,16 @@ import { useFetching } from "../hooks/useFetching";
 export default function App() {
   const [posts, setPosts] = useState([]);
   const [modal, setModal] = useState(false);
+  const [totalCount, setTotalCount] = useState(0);
+  const [limit, setLimit] = useState(5)
+  const [skip, setScip] = useState(0)
   const [filter, setFilter] = useState({ sort: "", query: "" });
   const sortedAndSearchedPosts = usePosts(posts, filter.sort, filter.query);
+
   const [fetchPosts, isPostsLoading, postsError] = useFetching(async () => {
-    const posts = await PostService.getAll();
-    setPosts(posts);
+    const responce = await PostService.getAll(limit, skip);
+    setPosts(responce.data.posts);
+    setTotalCount(responce.data.total)
   });
 
   useEffect(() => {
