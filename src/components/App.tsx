@@ -13,21 +13,28 @@ import { usePosts } from "../hooks/usePosts";
 import PostService from "../API/PostServuce";
 import Loader from "./UI/Loader/Loader";
 import { useFetching } from "../hooks/useFetching";
+import { getPageCount, getPagesArray } from "../utils/pages";
 
 export default function App() {
   const [posts, setPosts] = useState([]);
   const [modal, setModal] = useState(false);
-  const [totalCount, setTotalCount] = useState(0);
-  const [limit, setLimit] = useState(5)
-  const [skip, setScip] = useState(0)
+  const [totalPages, setTotalPages] = useState(0);
+  const [limit, setLimit] = useState(10);
+  const [page, setPage] = useState(1);
+  const [skip, setScip] = useState(0); // Вместо page
   const [filter, setFilter] = useState({ sort: "", query: "" });
   const sortedAndSearchedPosts = usePosts(posts, filter.sort, filter.query);
 
   const [fetchPosts, isPostsLoading, postsError] = useFetching(async () => {
     const responce = await PostService.getAll(limit, skip);
     setPosts(responce.data.posts);
-    setTotalCount(responce.data.total)
+    const totalCount = responce.data.total;
+    setTotalPages(getPageCount(totalCount, limit));
   });
+
+  let pagesArray = getPagesArray(totalPages);
+
+  console.log(pagesArray);
 
   useEffect(() => {
     fetchPosts();
@@ -75,11 +82,19 @@ export default function App() {
         <NewPostList remove={removePost} posts={sortedAndSearchedPosts} />
       )}
 
-      <div className={style.boxRed}></div>
-      <hr />
-      <p>Ниже Находится Тестовая Область приложения</p>
-
-      {/* <CouchApp></CouchApp>   //Тренировочный компонент app  */}
+      <div className={style.page__wrapper}>
+        {pagesArray.map((item) => {
+          return (
+            <span
+            onClick={()=>setPage(item)}
+              key={item}
+              className={`${style.page} ${page === item ? style.page__current : ''}`}
+            >
+              {item}
+            </span>
+          );
+        })}
+      </div>
     </div>
   );
 }
