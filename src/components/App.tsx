@@ -34,11 +34,9 @@ export default function App() {
 
   let pagesArray = getPagesArray(totalPages);
 
-  console.log(pagesArray);
-
   useEffect(() => {
     fetchPosts();
-  }, []);
+  }, [page]);
 
   const createPost = (newPost: any) => {
     setPosts([...posts, newPost]);
@@ -47,6 +45,11 @@ export default function App() {
 
   const removePost = (post: any) => {
     setPosts(posts.filter((p) => p.id !== post.id));
+  };
+
+  const changePage = (page: number, limit: number) => {
+    setScip((page - 1) * limit);
+    setPage(page);
   };
 
   return (
@@ -86,9 +89,11 @@ export default function App() {
         {pagesArray.map((item) => {
           return (
             <span
-            onClick={()=>setPage(item)}
+              onClick={() => changePage(item, limit)}
               key={item}
-              className={`${style.page} ${page === item ? style.page__current : ''}`}
+              className={`${style.page} ${
+                page === item ? style.page__current : ""
+              }`}
             >
               {item}
             </span>
