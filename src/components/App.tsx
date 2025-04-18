@@ -14,6 +14,7 @@ import PostService from "../API/PostServuce";
 import Loader from "./UI/Loader/Loader";
 import { useFetching } from "../hooks/useFetching";
 import { getPageCount, getPagesArray } from "../utils/pages";
+import Pagination from "./UI/pagination/Pagination";
 
 export default function App() {
   const [posts, setPosts] = useState([]);
@@ -31,8 +32,6 @@ export default function App() {
     const totalCount = responce.data.total;
     setTotalPages(getPageCount(totalCount, limit));
   });
-
-  let pagesArray = getPagesArray(totalPages);
 
   useEffect(() => {
     fetchPosts();
@@ -84,22 +83,12 @@ export default function App() {
       ) : (
         <NewPostList remove={removePost} posts={sortedAndSearchedPosts} />
       )}
-
-      <div className={style.page__wrapper}>
-        {pagesArray.map((item) => {
-          return (
-            <span
-              onClick={() => changePage(item, limit)}
-              key={item}
-              className={`${style.page} ${
-                page === item ? style.page__current : ""
-              }`}
-            >
-              {item}
-            </span>
-          );
-        })}
-      </div>
+      <Pagination
+        totalPages={totalPages}
+        page={page}
+        changePage={changePage}
+        limit={limit}
+      />
     </div>
   );
 }
