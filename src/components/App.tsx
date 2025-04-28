@@ -1,21 +1,15 @@
-import { HashRouter, Route, Routes } from "react-router-dom";
-import { Posts } from "../pages/Posts";
-import About from "../pages/About";
+import { HashRouter } from "react-router-dom";
 import styles from "./App.module.scss";
+import Navbar from "./Navbar/Navbar";
+import Error from "../pages/Error";
+import AppRouter from "./AppRouter";
+
 export default function App() {
   return (
     <HashRouter>
-      <div className={styles.navbar}>
-        <div className={styles.navbar__links}>
-          <a href="#/about">About</a>
-          <a href="#/posts">Posts</a>
-        </div>
-      </div>
+      <Navbar />
       <div className={styles.App}>
-      <Routes>
-        <Route path="/posts" element={<Posts />} />
-        <Route path="/about" element={<About />} />
-      </Routes>
+        <AppRouter />
       </div>
     </HashRouter>
   );
