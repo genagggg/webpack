@@ -11,6 +11,7 @@ import PostFilter from "../components/PostFilter";
 import Loader from "../components/UI/Loader/Loader";
 import NewPostList from "../components/Posts/NewPostList/NewPostList";
 import Pagination from "../components/UI/pagination/Pagination";
+import { Outlet } from "react-router-dom";
 
 export const Posts = () => {
   const [posts, setPosts] = useState([]);
@@ -84,6 +85,7 @@ export const Posts = () => {
         changePage={changePage}
         limit={limit}
       />
+      <Outlet />
     </div>
   );
 };
