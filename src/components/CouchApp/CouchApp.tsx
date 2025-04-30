@@ -10,29 +10,28 @@ const CouchApp = () => {
   const [postArray, setPostArray] = useState([
     { id: "1", name: "John", password: "23144" },
     { id: "2", name: "Kolia", password: "186374" },
-  ])
-  console.log(postArray)
+  ]);
   const [changeValue, setChangeValue] = useState({ name: "", password: "" });
-  const [valueTest, setValueTest] = useState({ id: "", name: "", password: "" });
+  const [valueTest, setValueTest] = useState({
+    id: "",
+    name: "",
+    password: "",
+  });
   const centTestForm = (e: any) => {
     e.preventDefault();
     const newPost = {
-      id: Date.now().toString(), // Перевёл в строку потомучто id строка.
+      id: Date.now().toString(),
       name: valueTest.name,
       password: valueTest.password,
-    }
-    setPostArray([...postArray, newPost])
-    console.log("Значение поста:", postArray)
+    };
+    setPostArray([...postArray, newPost]);
   };
-
-  const remPost = ()=>{
-    console.log('удалён')
-  }
-
-  const [trueModal, setTrueModal] = useState(true)
+  const [trueModal, setTrueModal] = useState(true);
   return (
     <div>
-      <CModal visible={trueModal} setVisible={setTrueModal}>Контент какойто</CModal>
+      <CModal visible={trueModal} setVisible={setTrueModal}>
+        Контент какойто
+      </CModal>
       <CInput type={"submit"} />
       <input
         name="userName"
@@ -73,7 +72,7 @@ const CouchApp = () => {
         <CInput onClick={centTestForm} type="submit" />
       </form>
 
-      <CPostList posts={postArray}/>
+      <CPostList posts={postArray} />
     </div>
   );
 };
