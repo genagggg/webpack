@@ -9,7 +9,6 @@ interface UINewPost {
 }
 const NewPost = ({ number, remove, post }: UINewPost) => {
   const navigate = useNavigate()
-  console.log(navigate)
   return (
     <div className={style.postConteiner}>
       <h1>
