@@ -1,8 +1,8 @@
 import { ReactNode } from "react";
-import About from "../../pages/About";
-import Posts from "../../pages/Posts";
-import PostIdPage from "../../pages/PostIdPage";
-import Error from "../../pages/Error";
+import About from "../pages/About";
+import Posts from "../pages/Posts";
+import PostIdPage from "../pages/PostIdPage";
+import Error from "../pages/Error";
 
 interface RouteConfig {
   path: string;
