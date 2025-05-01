@@ -2,17 +2,19 @@ import { ReactNode } from "react";
 import About from "../pages/About";
 import Posts from "../pages/Posts";
 import PostIdPage from "../pages/PostIdPage";
-import Error from "../pages/Error";
+import Login from "../pages/Login";
 
 interface RouteConfig {
   path: string;
   element: ReactNode;
 }
 
-export const routes: RouteConfig[] = [
-  { path: "/", element: <About /> },
+export const privateRoutes: RouteConfig[] = [
   { path: "/about", element: <About /> },
   { path: "/posts", element: <Posts /> },
   { path: "/posts/:id", element: <PostIdPage /> },
-  { path: "*", element: <Error /> },
 ];
+
+export const publicRouters: RouteConfig[] = [
+  { path: "/login", element: <Login /> },
+]
