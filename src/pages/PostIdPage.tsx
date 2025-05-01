@@ -1,44 +1,75 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useFetching } from "../hooks/useFetching";
-import PostService from "../API/PostServuce";
 import Loader from "../components/UI/Loader/Loader";
+import PostService from "../API/PostServuce";
 
-const PostIdPage = () => {
+interface Post {
+  id: number;
+  title: string;
+  body: string;
+  userId: number;
+  tags: string[];
+  reactions: number;
+}
+
+interface Comment {
+  id: number;
+  body: string;
+  postId: number;
+  user: {
+    id: number;
+    username: string;
+  };
+}
+
+const PostIdPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
-  const [post, setPost] = useState({ id: "", title: "" });
-  const [comments, setComments] = useState([]);
+  const [post, setPost] = useState<Post | null>(null);
+  const [comments, setComments] = useState<Comment[]>([]);
+  
   const [fetchPostById, isLoading, error] = useFetching(async () => {
-    const response = await PostService.getById(id);
-    setPost(response.data);
+    const response = await PostService.getById(Number(id));
+    setPost(response); 
   });
+  
   const [fetchComment, isComLoading, comError] = useFetching(async () => {
-    const response = await PostService.getCommentsByPostId(id);
-    setComments(response.data.comments);
+    const response = await PostService.getCommentsByPostId(Number(id));
+    setComments(response.comments); 
   });
 
   useEffect(() => {
-    fetchPostById();
-    fetchComment();
-  }, []);
+    if (id) {
+      fetchPostById();
+      fetchComment();
+    }
+  }, [id]);
+
+  if (!id) return <div>Пост не найден</div>;
+
   return (
     <div>
-      <h1>Вы попали на страницу поста c ID = ${id}</h1>
+      <h1>Вы попали на страницу поста c ID = {id}</h1>
+      
       {isLoading ? (
         <Loader />
       ) : (
-        <div>
-          {post.id}. {post.title}
-        </div>
+        post && (
+          <div>
+            <h2>{post.id}. {post.title}</h2>
+            <p>{post.body}</p>
+          </div>
+        )
       )}
-      <h1>Коментарии</h1>
+      
+      <h2>Комментарии</h2>
       {isComLoading ? (
         <Loader />
       ) : (
         <div>
           {comments.map((comm) => (
-            <div>
-              <h5>{comm.id}</h5>
+            <div key={comm.id} style={{ marginBottom: '1rem' }}>
+              <h5>{comm.user.username}</h5>
               <div>{comm.body}</div>
             </div>
           ))}
