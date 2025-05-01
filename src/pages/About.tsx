@@ -1,2 +1,4 @@
-const About = () => <h1>About Page</h1>;
+import { FC } from 'react';
+
+const About: FC = () => <div>About Page</div>;
 export default About;

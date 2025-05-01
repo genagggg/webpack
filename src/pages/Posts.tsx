@@ -12,7 +12,7 @@ import Loader from "../components/UI/Loader/Loader";
 import NewPostList from "../components/Posts/NewPostList/NewPostList";
 import Pagination from "../components/UI/pagination/Pagination";
 
-export const Posts = () => {
+const Posts = () => {
   const [posts, setPosts] = useState([]);
   const [modal, setModal] = useState(false);
   const [totalPages, setTotalPages] = useState(0);
@@ -87,3 +87,5 @@ export const Posts = () => {
     </div>
   );
 };
+
+export default Posts;
