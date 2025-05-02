@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { HashRouter } from 'react-router-dom';
 import styles from './App.module.scss';
 import { AuthContext } from '../context';
@@ -7,7 +7,11 @@ import AppRouter from './AppRouter';
 
 export default function App() {
   const [isAuth, setIsAuth] = useState(false);
-
+useEffect(()=>{
+  if(localStorage.getItem('auth')){
+    setIsAuth(true)
+  }
+}, [])
   return (
     <AuthContext.Provider value={{ isAuth, setIsAuth }}>
       <HashRouter>

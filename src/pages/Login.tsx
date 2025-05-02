@@ -11,6 +11,7 @@ const Login = () => {
     event.preventDefault();
     setIsAuth(true);
     navigate("/posts", { replace: true });
+    localStorage.setItem('auth', 'true')
   };
   return (
     <div>
