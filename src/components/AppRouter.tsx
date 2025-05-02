@@ -1,7 +1,8 @@
 import { Routes, Route, Navigate } from "react-router-dom";
 import { publicRouters, privateRoutes } from "../router";
-import { FC } from "react";
+import { FC, useContext } from "react";
 import Error from "../pages/Error";
+import { AuthContext } from "../context";
 
 interface RouteConfig {
   path: string;
@@ -9,8 +10,8 @@ interface RouteConfig {
 }
 
 const AppRouter: FC = () => {
-  const isAuth = false; 
-
+  const {isAuth}=useContext(AuthContext)
+console.log(isAuth)
   return (
     <Routes>
       {/* Публичные маршруты */}
