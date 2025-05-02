@@ -1,14 +1,12 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback, useRef } from "react";
 import { usePosts } from "../hooks/usePosts";
 import { useFetching } from "../hooks/useFetching";
-import { getPageCount } from "../utils/pages";
 import MyButton from "../components/UI/button/MyButton";
 import MyModal from "../components/UI/MyModal/MyModal";
 import PostForm from "../components/UI/PostForm/PostForm";
 import PostFilter from "../components/PostFilter";
 import Loader from "../components/UI/Loader/Loader";
 import NewPostList from "../components/Posts/NewPostList/NewPostList";
-import Pagination from "../components/UI/pagination/Pagination";
 import PostService from "../API/PostServuce";
 
 interface Post {
@@ -25,47 +23,78 @@ interface FilterOptions {
   query: string;
 }
 
-interface PostsResponse {
-  posts: Post[];
-  total: number;
-  skip: number;
-  limit: number;
-}
-
 const Posts: React.FC = () => {
   const [posts, setPosts] = useState<Post[]>([]);
   const [modal, setModal] = useState<boolean>(false);
-  const [totalPages, setTotalPages] = useState<number>(0);
-  const [limit, setLimit] = useState<number>(10);
-  const [page, setPage] = useState<number>(1);
+  const [limit] = useState<number>(10);
   const [skip, setSkip] = useState<number>(0);
+  const [hasMore, setHasMore] = useState<boolean>(true);
+  const [isInitialLoading, setIsInitialLoading] = useState<boolean>(true);
   const [filter, setFilter] = useState<FilterOptions>({ sort: "", query: "" });
   
+  const observer = useRef<IntersectionObserver | null>(null);
+  const lastPostElementRef = useRef<HTMLDivElement>(null);
+
   const sortedAndSearchedPosts = usePosts(posts, filter.sort, filter.query);
 
   const [fetchPosts, isPostsLoading, postsError] = useFetching(async () => {
     const response = await PostService.getAll(limit, skip);
-    setPosts(response.posts);
-    const totalCount = response.total;
-    setTotalPages(getPageCount(totalCount, limit));
+    
+    if (response.posts.length === 0) {
+      setHasMore(false);
+      return;
+    }
+    
+    setPosts(prevPosts => [...prevPosts, ...response.posts]);
+    setIsInitialLoading(false);
   });
 
   useEffect(() => {
-    fetchPosts();
-  }, [skip]); 
+    // Сбрасываем состояние при изменении фильтра
+    setPosts([]);
+    setSkip(0);
+    setHasMore(true);
+    setIsInitialLoading(true);
+  }, [filter]);
+
+  useEffect(() => {
+    if (hasMore) {
+      fetchPosts();
+    }
+  }, [skip, filter, hasMore]);
+
+  const handleObserver = useCallback((entries: IntersectionObserverEntry[]) => {
+    const [entry] = entries;
+    if (entry.isIntersecting && hasMore && !isPostsLoading) {
+      setSkip(prevSkip => prevSkip + limit);
+    }
+  }, [hasMore, isPostsLoading, limit]);
+
+  useEffect(() => {
+    if (observer.current) observer.current.disconnect();
+    
+    observer.current = new IntersectionObserver(handleObserver, {
+      root: null,
+      rootMargin: "20px",
+      threshold: 1.0
+    });
+    
+    if (lastPostElementRef.current) {
+      observer.current.observe(lastPostElementRef.current);
+    }
+    
+    return () => {
+      if (observer.current) observer.current.disconnect();
+    };
+  }, [handleObserver, sortedAndSearchedPosts]);
 
   const createPost = (newPost: Post) => {
-    setPosts([...posts, newPost]);
+    setPosts([newPost, ...posts]);
     setModal(false);
   };
 
   const removePost = (post: Post) => {
     setPosts(posts.filter((p) => p.id !== post.id));
-  };
-
-  const changePage = (page: number, limit: number) => {
-    setSkip((page - 1) * limit);
-    setPage(page);
   };
 
   return (
@@ -87,20 +116,28 @@ const Posts: React.FC = () => {
 
       {postsError && <h1>Произошла ошибка {postsError}</h1>}
 
-      {isPostsLoading ? (
+      {isInitialLoading ? (
         <div style={{ display: "flex", justifyContent: "center", marginTop: "50px" }}>
           <Loader />
         </div>
       ) : (
-        <NewPostList remove={removePost} posts={sortedAndSearchedPosts} />
+        <>
+          <NewPostList remove={removePost} posts={sortedAndSearchedPosts} />
+          <div ref={lastPostElementRef} style={{ height: "20px" }} />
+        </>
       )}
       
-      <Pagination
-        totalPages={totalPages}
-        page={page}
-        changePage={changePage}
-        limit={limit}
-      />
+      {isPostsLoading && !isInitialLoading && (
+        <div style={{ display: "flex", justifyContent: "center", marginTop: "20px" }}>
+          <Loader />
+        </div>
+      )}
+      
+      {!hasMore && (
+        <div style={{ textAlign: "center", margin: "20px 0" }}>
+          Вы достигли конца списка
+        </div>
+      )}
     </div>
   );
 };
