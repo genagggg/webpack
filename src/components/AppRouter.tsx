@@ -11,34 +11,32 @@ interface RouteConfig {
 
 const AppRouter: FC = () => {
   const {isAuth}=useContext(AuthContext)
-console.log(isAuth)
+  console.log(isAuth)
   return (
     <Routes>
-      {/* Публичные маршруты */}
-      {publicRouters.map(({ path, element }: RouteConfig) => (
-        <Route key={path} path={path} element={element} />
-      ))}
+    {/* Основное перенаправление */}
+    <Route 
+      path="/" 
+      element={
+        isAuth 
+          ? <Navigate to={privateRoutes[0]?.path || "/"} replace /> 
+          : <Navigate to={publicRouters[0]?.path || "/login"} replace />
+      } 
+    />
 
-      {/* Приватные маршруты */}
-      {isAuth && 
-        privateRoutes.map(({ path, element }: RouteConfig) => (
-          <Route key={path} path={path} element={element} />
-        ))
-      }
+    {/* Публичные маршруты (доступны всегда) */}
+    {publicRouters.map(({ path, element }: RouteConfig) => (
+      <Route key={path} path={path} element={element} />
+    ))}
 
-      {/* Перенаправление для корневого пути */}
-      <Route 
-        path="/" 
-        element={
-          isAuth 
-            ? <Navigate to="/about" replace /> 
-            : <Navigate to="/login" replace />
-        } 
-      />
+    {/* Приватные маршруты (только для авторизованных) */}
+    {isAuth && privateRoutes.map(({ path, element }: RouteConfig) => (
+      <Route key={path} path={path} element={element} />
+    ))}
 
-      {/* Обработка 404 */}
-      <Route path="*" element={<Error/>} />
-    </Routes>
+    {/* Обработка 404 */}
+    <Route path="*" element={<Error />} />
+  </Routes>
   );
 };
 
