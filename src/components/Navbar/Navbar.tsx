@@ -1,10 +1,10 @@
-import React, { useContext } from "react";
-import { Link } from "react-router-dom";
-import styles from "./Navbar.module.scss";
-import { AuthContext } from "../../context";
+import { Link } from 'react-router-dom';
+import styles from './Navbar.module.scss';
+import { useAuth } from '../../context';
+
 const Navbar = () => {
-  const [isAuth] = useContext(AuthContext);
-  console.log('isAus', isAuth)
+  const { isAuth } = useAuth();
+
   return (
     <div className={styles.navbar}>
       <div className={styles.navbar__links}>
