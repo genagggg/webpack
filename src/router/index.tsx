@@ -3,6 +3,7 @@ import About from "../pages/About";
 import Posts from "../pages/Posts";
 import PostIdPage from "../pages/PostIdPage";
 import Login from "../pages/Login";
+import TestPage from "../pages/TestPage";
 
 interface RouteConfig {
   path: string;
@@ -17,4 +18,5 @@ export const privateRoutes: RouteConfig[] = [
 
 export const publicRouters: RouteConfig[] = [
   { path: "/login", element: <Login /> },
+  { path: "/testpage", element: <TestPage/> },
 ]

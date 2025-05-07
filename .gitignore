@@ -6,3 +6,6 @@ build/
 
 # Игнорировать папку .vscode
 .vscode/
+
+# Игнорировать Компонент TestPage
+src/pages/TestPage.tsx
